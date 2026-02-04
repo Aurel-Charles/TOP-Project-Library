@@ -9,9 +9,25 @@
 </head>
 <body>
     <h1>My Book Library</h1>
-    <button id="add-book">Add a reference</button>
+    <button id="add-book">Add a new Book?</button>
     <div class="card-container">
-
+        
     </div>
+    <dialog>
+        <form action="">
+            <div class="input-form">
+                <input type="text" id="new-book-title" name="new-book-title">
+                <label for="new-book-title">Book Title</label>
+
+                <input type="text" id="new-book-author" name="new-book-author" >
+                <label for="new-book-author">Author</label>
+                
+                <input type="number" id="new-book-date" name="new-book-date">
+                <label for="new-book-date">Published date</label>
+            </div>
+
+            <button class="validate-book" type="submit">Add book!</button>
+        </form>
+    </dialog>
 </body>
 </html>
