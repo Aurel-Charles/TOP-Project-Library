@@ -136,7 +136,6 @@ cardContainer.addEventListener('click', (e)=>{
             myLibrary[indexToToogle].read = false
         }
         console.log(myLibrary[indexToToogle]);
-        
     }
 })
 
