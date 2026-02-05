@@ -1,6 +1,5 @@
 console.log("hello Odin");
 
-
 const myLibrary = [];
 
 function Book(title, author, date ) {
@@ -9,6 +8,7 @@ function Book(title, author, date ) {
   this.author = author
   this.date = date
   this.id = crypto.randomUUID()
+  Book.prototype.read = false
 }
 
 function addBookToLibrary(title, author, date) {
@@ -17,13 +17,12 @@ function addBookToLibrary(title, author, date) {
   myLibrary.push(newBook)
 }
 
+
 addBookToLibrary("Harry potter-Goblet of fire", "JK Rowling", 2002)
 addBookToLibrary("Harry potter-Order of the Phoenix", "JK Rowling", 2006)
 
-
-
+// UPADTE LIBRARY IN THE HTML
 const cardContainer = document.querySelector('.card-container')
-
 function updateLibrary() {
     cardContainer.replaceChildren() 
 
@@ -54,6 +53,12 @@ function updateLibrary() {
         btnRemoveBook.setAttribute('class', 'btn-delete-book')
         btnRemoveBook.setAttribute('data-remove', element.id)
         bookDiv.appendChild(btnRemoveBook)
+
+        const readToogle = document.createElement('button')
+        readToogle.textContent = 'To read'
+        readToogle.setAttribute('class', 'btn-to-read')
+        readToogle.setAttribute('data-read', element.id)
+        bookDiv.appendChild(readToogle)
         
         cardContainer.appendChild(bookDiv)
     });
@@ -62,6 +67,7 @@ function updateLibrary() {
 
 
 // ADDING BOOK //
+const form = document.querySelector('form')
 
 // open form
 const btnAddBook =  document.querySelector('#add-book')
@@ -81,7 +87,18 @@ btnValidateBook.addEventListener('click', (e)=> {
     
     addBookToLibrary(newTitle, newAuthor, newDate)
     updateLibrary()
+    form.reset()
     dialog.close()
+})
+
+// Cancel form
+const cancelForm = document.querySelector('.cancel-btn')
+cancelForm.addEventListener('click', (e)=>{
+    e.preventDefault()
+    if (e) {
+        form.reset()
+        dialog.close()
+    }
 })
 
 
@@ -95,23 +112,34 @@ cardContainer.addEventListener('click', (e)=>{
         document.querySelector(`[data-id="${id}"]`).remove()
         
         // update myLibrary Array
-
+        const indexToRemove = myLibrary.findIndex(obj => obj.id === id);
+        myLibrary.splice(indexToRemove, 1)
+        console.log(myLibrary);
         
     }
 })
 
 
-// const btnDeleteBook = document.querySelectorAll('.btn-delete-book')
-// btnDeleteBook.forEach((btn)=> {
-//     btn.addEventListener('click', ()=>{
-//         const id = btn.getAttribute('data-remove')
-//         console.log(id);
-//         const cardToDelete = document.querySelector(`[data-id=${id}]`)
-//         console.log(cardToDelete);
-        
-//     })
-    
-// })
+// READ TOGGLE
 
+cardContainer.addEventListener('click', (e)=>{
+    if (e.target.classList.contains('btn-to-read')) {
+        e.target.classList.toggle('read')
+        
+        // update object 
+        const id = e.target.getAttribute('data-read')
+        const indexToToogle = myLibrary.findIndex(obj => obj.id === id);
+        if (!myLibrary[indexToToogle].read) {
+            myLibrary[indexToToogle].read = true
+        }
+        else{
+            myLibrary[indexToToogle].read = false
+        }
+        console.log(myLibrary[indexToToogle]);
+        
+    }
+})
 
 updateLibrary()
+console.log(myLibrary);
+
