@@ -123,16 +123,27 @@ cardContainer.addEventListener('click', (e)=>{
 // READ TOGGLE
 
 cardContainer.addEventListener('click', (e)=>{
-    if (e.target.classList.contains('btn-to-read')) {
+    // update object 
+    const id = e.target.getAttribute('data-read')
+    const indexToToogle = myLibrary.findIndex(obj => obj.id === id);
+
+    if (e.target.classList.contains('btn-to-read') && e.target.classList.contains('read') == false ) {
         e.target.classList.toggle('read')
+        e.target.textContent = 'Read!'
         
-        // update object 
-        const id = e.target.getAttribute('data-read')
-        const indexToToogle = myLibrary.findIndex(obj => obj.id === id);
         if (!myLibrary[indexToToogle].read) {
             myLibrary[indexToToogle].read = true
         }
         else{
+            myLibrary[indexToToogle].read = false
+        }
+        console.log(myLibrary[indexToToogle]);
+    }
+    else if (e.target.classList.contains('btn-to-read') && e.target.classList.contains('read') == true ) {
+        e.target.classList.toggle('read')
+        e.target.textContent = 'To read!'
+
+        if (myLibrary[indexToToogle].read) {
             myLibrary[indexToToogle].read = false
         }
         console.log(myLibrary[indexToToogle]);
