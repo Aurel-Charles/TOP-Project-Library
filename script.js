@@ -8,7 +8,9 @@ function Book(title, author, date ) {
   this.author = author
   this.date = date
   this.id = crypto.randomUUID()
-  Book.prototype.read = false
+}
+Book.prototype.toggleRead = function() {
+    this.read = !this.read
 }
 
 function addBookToLibrary(title, author, date) {
@@ -18,8 +20,12 @@ function addBookToLibrary(title, author, date) {
 }
 
 
-addBookToLibrary("Harry potter-Goblet of fire", "JK Rowling", 2002)
-addBookToLibrary("Harry potter-Order of the Phoenix", "JK Rowling", 2006)
+addBookToLibrary("Gargantua", "Rabelais", 1534)
+addBookToLibrary("Don Juan ", "Moliere", 1665)
+addBookToLibrary("Candide", "Voltaire", 1759)
+addBookToLibrary("La Peau de chagrin", "Balzac", 1831)
+addBookToLibrary("Les Trois Mousquetaires", "Balzac", 1831)
+addBookToLibrary("Notre-Dame de Paris", "Alexandre Dumas", 1844)
 
 // UPADTE LIBRARY IN THE HTML
 const cardContainer = document.querySelector('.card-container')
@@ -28,7 +34,7 @@ function updateLibrary() {
 
 
     myLibrary.forEach(element => {
-        console.log(`${element.title} de ${element.author}, ${element.date} - ID: ${element.id}` );
+        // console.log(`${element.title} de ${element.author}, ${element.date} - ID: ${element.id}` );
         const bookDiv = document.createElement("div")
         bookDiv.setAttribute('class', 'book-card')
         bookDiv.setAttribute('data-id', element.id)
@@ -48,17 +54,28 @@ function updateLibrary() {
         bookDate.setAttribute('class', 'book-published-date')
         bookDiv.appendChild(bookDate)
 
+        const btnDiv = document.createElement('div')
+        btnDiv.setAttribute('class', 'btn-div')
+        bookDiv.appendChild(btnDiv)
+
+
         const btnRemoveBook = document.createElement('button')
-        btnRemoveBook.textContent = 'X'
+        btnRemoveBook.textContent = 'Remove?'
         btnRemoveBook.setAttribute('class', 'btn-delete-book')
         btnRemoveBook.setAttribute('data-remove', element.id)
-        bookDiv.appendChild(btnRemoveBook)
+        btnDiv.appendChild(btnRemoveBook)
 
         const readToogle = document.createElement('button')
         readToogle.textContent = 'To read'
         readToogle.setAttribute('class', 'btn-to-read')
         readToogle.setAttribute('data-read', element.id)
-        bookDiv.appendChild(readToogle)
+        btnDiv.appendChild(readToogle)
+
+        if (element.read === true) {
+            readToogle.classList.add('read')
+            btnDiv.appendChild(readToogle)
+        }
+
         
         cardContainer.appendChild(bookDiv)
     });
@@ -81,12 +98,37 @@ btnAddBook.addEventListener('click', ()=> {
 const btnValidateBook = document.querySelector('.validate-book')
 btnValidateBook.addEventListener('click', (e)=> {
     e.preventDefault()
-    const newTitle = document.querySelector('input[name=new-book-title]').value
-    const newAuthor = document.querySelector('input[name=new-book-author]').value
-    const newDate = document.querySelector('input[name=new-book-date]').value
+    const newTitle = document.querySelector('input[name=new-book-title]')
+    const newAuthor = document.querySelector('input[name=new-book-author]')
+    const newDate = document.querySelector('input[name=new-book-date]')
+    const readState = document.querySelector('input[name=read-state]')
+    console.log(readState.checked);
     
-    addBookToLibrary(newTitle, newAuthor, newDate)
+    isValid = true
+
+    ;[newTitle, newAuthor].forEach(element => {
+        element.setAttribute("class", "")
+    });
+    if (!newTitle.value) {
+        newTitle.classList.add("invalid")
+        isValid = false
+    }
+    if (!newAuthor.value) {
+        newAuthor.classList.add("invalid")
+        isValid = false
+    }
+    if (!isValid) {
+        return
+    }
+
+    addBookToLibrary(newTitle.value, newAuthor.value, newDate.value)
+    
+    if (readState.checked === true) {
+        myLibrary.at(-1).toggleRead()
+
+    }
     updateLibrary()
+    
     form.reset()
     dialog.close()
 })
@@ -112,9 +154,11 @@ cardContainer.addEventListener('click', (e)=>{
         document.querySelector(`[data-id="${id}"]`).remove()
         
         // update myLibrary Array
-        const indexToRemove = myLibrary.findIndex(obj => obj.id === id);
-        myLibrary.splice(indexToRemove, 1)
-        console.log(myLibrary);
+        const indexBook = myLibrary.findIndex(obj => obj.id === id);
+        const book = myLibrary[indexBook]
+        
+        myLibrary.splice(indexBook, 1)
+        console.log(`${book.title} has been removed from the base`);
         
     }
 })
@@ -125,28 +169,48 @@ cardContainer.addEventListener('click', (e)=>{
 cardContainer.addEventListener('click', (e)=>{
     // update object 
     const id = e.target.getAttribute('data-read')
-    const indexToToogle = myLibrary.findIndex(obj => obj.id === id);
+    const book = myLibrary.find(obj => obj.id === id);
 
-    if (e.target.classList.contains('btn-to-read') && e.target.classList.contains('read') == false ) {
-        e.target.classList.toggle('read')
-        e.target.textContent = 'Read!'
+    if (e.target.classList.contains('btn-to-read')) {
         
-        if (!myLibrary[indexToToogle].read) {
-            myLibrary[indexToToogle].read = true
+        if (book) {
+            book.toggleRead()
+            e.target.classList.toggle('read', book.read)
+            e.target.textContent = book.read? 'Read' : 'To read'
+            console.log(book.read);
+            console.log(`Status "read" for ${book.title} has change to ${book.read}`);
         }
-        else{
-            myLibrary[indexToToogle].read = false
-        }
-        console.log(myLibrary[indexToToogle]);
     }
-    else if (e.target.classList.contains('btn-to-read') && e.target.classList.contains('read') == true ) {
-        e.target.classList.toggle('read')
-        e.target.textContent = 'To read!'
+    
+})
 
-        if (myLibrary[indexToToogle].read) {
-            myLibrary[indexToToogle].read = false
-        }
-        console.log(myLibrary[indexToToogle]);
+// Sort BOOKS
+const sortBy = document.querySelector('select')
+sortBy.addEventListener('change', (e)=> {
+    value = e.target.value;
+    switch (value) {
+        case 'date-oldest':
+                console.log('sort by published date from oldest to newest:' + value);
+                myLibrary.sort( (a, b) => a.date - b.date )
+                updateLibrary()
+            break;
+        case 'date-newest':
+                console.log('sort by published date from newest to oldest:' + value);
+                myLibrary.sort( (a, b) => b.date - a.date )
+                updateLibrary()
+            break;
+        case 'author-up':
+                console.log('sort by author from "A" to "Z":' + value);
+                myLibrary.sort( (a, b) => a.author.localeCompare(b.author) )
+                updateLibrary()
+            break;
+        case 'author-down':
+                console.log('sort by author from "A" to "Z":' + value);
+                myLibrary.sort( (a, b) => b.author.localeCompare(a.author) )
+                updateLibrary()
+            break;
+        default:
+            break;
     }
 })
 
