@@ -106,7 +106,7 @@ btnValidateBook.addEventListener('click', (e)=> {
     
     isValid = true
 
-    ;[newTitle, newAuthor].forEach(element => {
+    ;[newTitle, newAuthor, newDate].forEach(element => {
         element.setAttribute("class", "")
     });
     if (!newTitle.value) {
@@ -115,6 +115,10 @@ btnValidateBook.addEventListener('click', (e)=> {
     }
     if (!newAuthor.value) {
         newAuthor.classList.add("invalid")
+        isValid = false
+    }
+    if (!newDate.value) {
+        newDate.classList.add("invalid")
         isValid = false
     }
     if (!isValid) {

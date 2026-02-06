@@ -76,6 +76,7 @@ h1{
 }
 
 .book-card{
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.311);   
     border: 1px solid black;
     color: black;
     background-color: rgb(255, 234, 176);
@@ -96,10 +97,12 @@ h1{
 
 .book-title{
     font-size: 2rem;
+    justify-self: center;
 }
 
 .book-author{
     font-size: 1.2rem;
+    justify-self: center;
 }
 
 .book-published-date{
@@ -111,6 +114,7 @@ h1{
     padding: 0.5rem 1rem;
     width: fit-content;
     height: fit-content;
+    justify-self: center;
 }
 
 .cta-div{
