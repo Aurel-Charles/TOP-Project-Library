@@ -73,6 +73,7 @@ function updateLibrary() {
 
         if (element.read === true) {
             readToogle.classList.add('read')
+            readToogle.textContent = 'Read'
             btnDiv.appendChild(readToogle)
         }
 
